@@ -4,15 +4,18 @@ $(error INSTALL_DIR is not set. Please set it before running this Makefile to a 
 endif
 
 all:
-	@echo "Please run 'make install'"
+	@echo "Please run 'make install config'"
 
 install:
 	@echo ""
 	mkdir -p $(INSTALL_DIR)
-	cp shellmarks.sh $(INSTALL_DIR)
-	cp shellmark_bash_include.sh $(INSTALL_DIR)
-	chmod 755 $(INSTALL_DIR)/shellmarks.sh
-	chmod 644 $(INSTALL_DIR)/shellmark_bash_include.sh
-	@echo "add the line 'source $(INSTALL_DIR)/shellmark_bash_include.sh' to your .bashrc to have completion"
+	cp directory-marks $(INSTALL_DIR)
+	cp directory-marks_bash_include.sh $(INSTALL_DIR)
+	chmod 755 $(INSTALL_DIR)/directory-marks
+	chmod 644 $(INSTALL_DIR)/directory-marks_bash_include.sh
 
-.PHONY: all install
+
+config:
+	echo "source ${INSTALL_DIR}/directory-marks_bash_include.sh" > ~/.bashrc
+
+.PHONY: all install config

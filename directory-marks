@@ -35,39 +35,36 @@
 # cdm -l - list all bookmarks
 
 # setup file to store bookmarks
-_sm_file_name="shmal"
-if [ -z "$SMFILE" ]; then
+_sm_file_name="directory-marks"
+if [ -z "$DMFILE" ]; then
     if [ -n "$XDG_CONFIG_HOME" ]; then
         if [ -d "$XDG_CONFIG_HOME/shell" ]; then
             mkdir -p "$XDG_CONFIG_HOME/shell"
         fi
-        SMFILE="$XDG_CONFIG_HOME/shell/$_sm_file_name"
+        DMFILE="$XDG_CONFIG_HOME/shell/$_sm_file_name"
     else
        if ! [ -d "$HOME/.config/shell" ]; then
             mkdir -p "$HOME/.config/shell"
         fi
-        SMFILE="$HOME/.config/shell/$_sm_file_name"
+        DMFILE="$HOME/.config/shell/$_sm_file_name"
     fi
 fi
-if [ ! -f "$SMFILE" ]; then
-    touch "$SMFILE"
+if [ ! -f "$DMFILE" ]; then
+    touch "$DMFILE"
 fi
-
-# RED="0;31m"
-# GREEN="0;33m"
 
 # Error message and exit
 _sm_error () {
     case "$1" in
         1) echo "Error: Wrong usage of arguments!" ;;
-        2) echo "Error: Shellmark name required!" ;;
+        2) echo "Error: directory-mark name required!" ;;
         3) echo "Error: Bookmark name is not valid!" ;;
-        4) echo "Error: Provided with 2 directories but no shellmark name!" ;;
+        4) echo "Error: Provided with 2 directories but no directory-mark name!" ;;
         5) echo "Error: No valid directory provided!" ;;
         6) echo "Error: Shouldn't have reached this point." ;;
-        7) echo "Error: Shellmark already exists." ;;
+        7) echo "Error: directory-mark already exists." ;;
         8) echo "Error: Directory does not exist!" ;;
-        9) echo "Error: Shellmark does not exist!" ;;
+        9) echo "Error: directory-mark does not exist!" ;;
         *) ;;
     esac
     if [ "$#" = 1 ]; then
@@ -78,16 +75,16 @@ _sm_error () {
 # print out help for the forgetful
 _print_help () {
     echo ''
-    echo 'Usage: cdm [OPTIONS] [SHELLMARK...] [DIRECTORY]'
+    echo 'Usage: cdm [OPTIONS] [directory-mark...] [directory]'
     echo ''
-    echo '  -d, --delete  Deletes SHELLMARKs from list'
-    echo '  -g, --go      Goes (cd) to the directory pointed to by SHELLMARK'
-    echo '  -p, --print   Prints the directories pointed to by SHELLMARKs'
-    echo '  -s, --set     Saves DIRECTORY or else $PWD as SHELLMARK'
-    echo '  -r, --replace Replaces DIRECTORY or else $PWD as SHELLMARK'
-    echo '  -h, --help    Lists all available shellmarks'
-    echo '  -l, --list    Lists all available shellmarks'
-    echo '  -L, --listdir Lists all available shellmarks and the directories they point to'
+    echo '  -d, --delete  Deletes directory-marks from list'
+    echo '  -g, --go      Goes (cd) to the directory pointed to by directory-mark'
+    echo '  -p, --print   Prints the directories pointed to by directory-marks'
+    echo '  -s, --set     Saves DIRECTORY or else $PWD as directory-mark'
+    echo '  -r, --replace Replaces DIRECTORY or else $PWD as directory-mark'
+    echo '  -h, --help    Lists all available directory-marks'
+    echo '  -l, --list    Lists all available directory-marks'
+    echo '  -L, --listdir Lists all available directory-marks and the directories they point to'
     echo ''
     echo 'Config: ~/.config/shell/shmal'
     echo
@@ -97,13 +94,13 @@ _print_help () {
 }
 
 _check_sm () {
-    # Check if shellmark name is valid. If not, exit with error
+    # Check if directory-mark name is valid. If not, exit with error
     _sm="$1"
     if echo "$_sm" | grep -qEe '[^a-zA-Z0-9_][^a-zA-Z0-9_-]*$'; then
         _sm_error 3
     fi
-    # Check if SM already exists in SMFILE.
-    if grep -qEe "^$_sm " "$SMFILE"; then
+    # Check if SM already exists in DMFILE.
+    if grep -qEe "^$_sm " "$DMFILE"; then
         _sm_e=1
     else
         _sm_e=0
@@ -149,7 +146,7 @@ _set_sm () {
     if [ "$_sm_e" = 1 ]; then
         _sm_error 7
     else
-        echo "$_sm \"$_sm_dir\"" >> "$SMFILE"
+        echo "$_sm \"$_sm_dir\"" >> "$DMFILE"
     fi
 }
 
@@ -157,8 +154,8 @@ _set_sm () {
 _go_sm () {
     _check_sm "$1"
     if [ "$_sm_e" = 1 ] ; then
-        # Get dir by dereferrencing sm in SMFILE
-        _sm_dir=$(grep "^$1 " "$SMFILE" | awk '{print $2}' | sed -e "s:~:$HOME:")
+        # Get dir by dereferrencing sm in DMFILE
+        _sm_dir=$(grep "^$1 " "$DMFILE" | awk '{print $2}' | sed -e "s:~:$HOME:")
 
         # Check if dir exists
         if [ -d "$_sm_dir" ]; then
@@ -181,7 +178,7 @@ _print_sm () {
         if [ "$inc" -gt 1 ]; then
             _check_sm "$_sm_ar"
             if [ "$_sm_e" = 1 ] ; then
-                _sm_dir=$(grep "^$_sm_ar " "$SMFILE" | grep -P -oh '".+"' | sed -e "s:~:$HOME:"|sed '~s,^",,;~s,"$,,')
+                _sm_dir=$(grep "^$_sm_ar " "$DMFILE" | grep -P -oh '".+"' | sed -e "s:~:$HOME:"|sed '~s,^",,;~s,"$,,')
                 echo "$_sm_dir"
             else
                 if [ "$#" -eq 1 ]; then
@@ -202,7 +199,7 @@ _delete_sm () {
         if [ "$inc" -gt 1 ]; then
             _check_sm "$_sm_ar"
             if [ "$_sm_e" = 1 ] ; then
-                sed -iEe "/^$_sm_ar /d" "$SMFILE"
+                sed -iEe "/^$_sm_ar /d" "$DMFILE"
             else
                 if [ "$#" -eq 1 ]; then
                     _sm_error 9
@@ -217,11 +214,11 @@ _delete_sm () {
 
 # list bookmarks with dirnam
 _list_sm_dir () {
-    cat "$SMFILE" | column -t -d -l 2 -C width=2| sort
+    cat "$DMFILE" | column -t -d -l 2 -C width=2| sort
 }
 # list bookmarks without dirname
 _list_sm () {
-    sort "$SMFILE"|awk '{print $1}'
+    sort "$DMFILE"|awk '{print $1}'
 }
 
 # grep -qEe "(^-[dgpshl]$|^--(delete|go|print|set|help|list)$)"

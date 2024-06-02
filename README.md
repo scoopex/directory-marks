@@ -1,26 +1,52 @@
 # About Shellmark
 
-Shellmark is a bash shell script that allows you to save and jump to commonly used directories.
+"directory-marks" is a bash shell script that allows you to save and jump to periodically used directories.
+This tool is based on a prior implementation of ["shellmark](https://github.com/sonjiku/shellmark) and
+["bashmarks"](https://github.com/huyng/bashmarks).
 
 
-## Install
+## Installation
 
-1. `git clone git://github.com/sonjiku/shellmark.git`
-2. `cd shellmarks`
-3. `make install INSTALL_DIR="$HOME/bin"`
-4. `source $(INSTALL_DIR)/`
-4. run `cdm`
+1. Clone repository
+   ```
+   git clone git@github.com:scoopex/directory-marks.git
+   ```
+2. Installation
+   ```
+   cd directory-marks`
+   export INSTALL_DIR="$HOME/bin"
+   make install
+   ```
+3. Add the shell completion to your `.bashrc` configuration.
+   (this is essential to to "directory-marks")
+   ```
+   make config
+   exec bash
+   ```
+4. Use it:
+   ```
+   cdm --help
+   cdm -s os-configs /etc
+   cdm -s os-logs /var/log
+   cdm os-<TAB><TAB>
+   ```
 
 
 ## Shell Commands
 
 ```
-cdm -s SHELLMARK [DIRECTORY] - Saves DIRECTORY or $PWD as SHELLMARK
-cdm -g SHELLMARK             - Goes (cd) to the directory associated with "bookmark_name"
-cdm -p SHELLMARKs            - Prints the directories associated with the provided shellmarks
-cdm -d SHELLMARKs            - Deletes the shellmarks
-cdm -l                       - Lists all available bookmarks
-cdm -L                       - Lists all available shellmarks and their associated directories
+$ cdm --help
+
+Usage: cdm [OPTIONS] [directory-mark...] [directory]
+
+  -d, --delete  Deletes directory-marks from list
+  -g, --go      Goes (cd) to the directory pointed to by directory-mark
+  -p, --print   Prints the directories pointed to by directory-marks
+  -s, --set     Saves DIRECTORY or else $PWD as directory-mark
+  -r, --replace Replaces DIRECTORY or else $PWD as directory-mark
+  -h, --help    Lists all available directory-marks
+  -l, --list    Lists all available directory-marks
+  -L, --listdir Lists all available directory-marks and the directories they point to
 ```
 
 ## Example Usage
@@ -41,7 +67,7 @@ $ cdm -p webfolder
 $ cdm --go <TAB><TAB>
 webfolder     locallib
 $ cdm --go  l<TAB>
-  $ cdm --go locallib
+$ cdm --go locallib
 $ cdm web
 $ pwd
 /var/www/
@@ -50,7 +76,7 @@ bash: cd: Error: Shellmark does not exist!: No such file or directory
 $ cdm -d webfolder web
 ```
 
-## Where shellmarks are stored
+## Where directory-marks are stored
 
-All of your directory bookmarks are saved in `~/.config/shell/shmal` (think SHell MArk List),
-but that can easily be changed just by changing the SMFILE environment variable.
+All of your directory bookmarks are saved in `~/.config/shell/directory-marks`
+but that can easily be changed just by changing the DMFILE environment variable.
