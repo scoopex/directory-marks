@@ -3,6 +3,8 @@
 "directory-marks" is a bash shell script that allows you to save and jump to periodically used directories.
 This tool is based on a prior implementation of ["shellmark](https://github.com/sonjiku/shellmark) and
 ["bashmarks"](https://github.com/huyng/bashmarks).
+The fork was necessary because I did not receive any feedback on pull requests. If one of the authors would
+like to review and accept my adjustments, I would be happy to send them to them via pull request.
 
 
 ## Installation
