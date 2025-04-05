@@ -1,4 +1,8 @@
+
 # About Shellmark
+
+![directory-marks-logo](https://github.com/scoopex/directory-marks/assets/288876/11a5166d-4b5d-467b-9836-f8647f062c7a)
+
 
 "directory-marks" is a bash shell script that allows you to save and jump to periodically used directories.
 This tool is based on a prior implementation of ["shellmark](https://github.com/sonjiku/shellmark) and
